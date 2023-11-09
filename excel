@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+int main() {
+    const char* filename = "input.csv";  // Reemplaza con el nombre de tu archivo CSV
+    FILE* file = fopen(filename, "r");
+
+    if (file == NULL) {
+        perror("Error en la apertura del archivo");
+        return 1;
+    }
+
+    int startRow = 2;  // Por ejemplo, fila 2
+    int endRow = 6;    // Hasta la fila 6
+    int startCol = 1;  // Por ejemplo, columna B
+    int endCol = 5;    // Hasta la columna F
+
+    double sum = 0.0;
+    char line[1024];
+
+    // Salta las filas anteriores a startRow
+    for (int row = 1; row < startRow; ++row) {
+        if (fgets(line, sizeof(line), file) == NULL) {
+            break;
+        }
+    }
+
+    // Suma los valores en las filas y columnas específicas
+    for (int row = startRow; row <= endRow; ++row) {
+        if (fgets(line, sizeof(line), file) == NULL) {
+            break;
+        }
+
+        int col = 1;
+        char* token = strtok(line, ",");
+        while (token != NULL) {
+            if (col >= startCol && col <= endCol) {
+                double cellValue = atof(token);
+                sum += cellValue;
+            }
+            token = strtok(NULL, ",");
+            col++;
+        }
+    }
+
+    // Imprime el resultado de la suma
+    printf("La suma de los valores en el rango especificado es: %.2lf\n", sum);
+
+    fclose(file);
+
+    return 0;
+}
